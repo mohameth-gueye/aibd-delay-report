@@ -1,0 +1,18 @@
+% 02_objective.tex: Section 1 (page 1).
+\section{Objective}\label{sec:objective}
+
+In this project I predict whether a scheduled arrival at Blaise Diagne International Airport (AIBD) will reach its stand late. The data are the regular-arrivals ledger of the airport for 2025 \citep{aibd2025ledger}. A flight counts as delayed when the elapsed time between its Scheduled Time of Arrival (STA) and the moment it reaches its stand (\blockon) exceeds 15~minutes. Let $d_i$ denote this elapsed time in minutes for flight $i$. The target is
+\begin{equation}\label{eq:target}
+  y_i =
+  \begin{cases}
+    1 & \text{if } d_i > 15,\\
+    0 & \text{otherwise.}
+  \end{cases}
+\end{equation}
+The task is a binary classification, and every prediction must be possible before the aircraft arrives. I therefore restrict the inputs to information that is fixed in the schedule: which airline operates the flight, under which flight number, with which aircraft type, from which origin, at which scheduled hour, and on which day of the week (\cref{sec:features}).
+
+The practical value of such a prediction lies in its timing. Because it depends only on the schedule, it is available well before the flight, when an operations team can still act on it. I see four uses: (i)~operational awareness, where the team sees at the start of a shift which arrivals are likely to be late; (ii)~resource planning, where stands, ground handling staff, and baggage belts are assigned with the expected delay in mind; (iii)~early delay identification, where flights with a high predicted probability are monitored before any delay message arrives; and (iv)~decision support, where the prediction is one input for the duty manager and does not replace operational judgment.
+
+This value exists only if the model sees what an operator would know at prediction time. The ledger also contains fields that are recorded at or after arrival, for example the actual time of arrival, delay codes, passenger and baggage counts, and free-text remarks. A model that used them could score well in the evaluation, but the score would say nothing about operational use, because these fields do not yet exist when the prediction is needed. I therefore treat the exclusion of post-arrival information as a design constraint of the whole study, and I enforce it in the code with an explicit check (\cref{sec:leakage}).
+
+Under this constraint I compare three models: a majority-class baseline, logistic regression, and histogram gradient boosting. The report describes the data (\cref{sec:data}), the methods (\cref{sec:methods}), and the experimental setup (\cref{sec:setup}), presents the results on a held-out test month (\cref{sec:results}), and discusses what these results do and do not support (\cref{sec:limitations}).

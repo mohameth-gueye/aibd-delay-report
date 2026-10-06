@@ -1,0 +1,68 @@
+% 06_results.tex: Section 5.
+\section{Results}\label{sec:results}
+
+\subsection{Performance metrics}\label{sec:metrics}
+
+\Cref{tab:metrics} reports the performance of the three models on the December test set. Both trained models clearly beat the majority baseline. The baseline reaches an accuracy of 0.459, which is the share of on-time flights in December, and a macro F1 of 0.315. The logistic regression reaches an accuracy of 0.668 and a macro F1 of 0.668, and gradient boosting reaches 0.644 for both. The ROC AUC is 0.749 for the logistic regression and 0.739 for gradient boosting. This means that for a randomly chosen delayed flight and a randomly chosen on-time flight, the logistic regression gives the delayed flight the higher score in about three out of four cases. I regard this as moderate discrimination, which is plausible for models that see only the schedule.
+
+\input{tables/tab_metrics}
+
+The two models differ in how they balance precision and recall. The logistic regression is more precise: 73.7\% of the flights that it flags are delayed, compared with 68.6\% for gradient boosting. Gradient boosting finds more delays: its recall is 0.631, compared with 0.600. The F1 score of the delayed class is almost the same, 0.662 and 0.657.
+
+The confidence intervals show how much these numbers depend on the test days. The interval of the macro F1 is about 0.05 to 0.06 wide (0.058 for the logistic regression and 0.050 for gradient boosting), and the intervals of the two models overlap. The paired comparison is more informative, because both models are scored on the same resamples. The macro F1 of the logistic regression is higher by 0.024, with an interval from 0.005 to 0.042, and its ROC AUC is higher by 0.009, with an interval from 0.000 to 0.018 whose lower limit is positive but only just. Both differences favor the logistic regression, but they are small. On the validation month the two models were practically tied, with macro F1 values of 0.649 and 0.651 (\cref{sec:tuning}), so I do not read the order on the test month as a stable ranking.
+
+\subsection{Confusion matrices}\label{sec:confusion}
+
+\Cref{fig:confusion} shows the confusion matrices of both models. Of the \num{967} test flights, 523 were delayed and 444 were on time. The logistic regression flagged 426 flights as delayed, which is 44.1\% of all flights. Of these, 314 were correct (true positives) and 112 were false alarms (false positives). It missed 209 delayed flights (false negatives) and correctly identified 332 on-time flights (true negatives). Gradient boosting flagged 481 flights, which is 49.7\%. It identified 330 delayed flights correctly, raised 151 false alarms, missed 193 delayed flights, and identified 293 on-time flights correctly.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{confusion_matrices_test}
+  \caption{Confusion matrices of both models on the December test set at the threshold of 0.5. Rows show the actual class and columns the predicted class.}
+  \label{fig:confusion}
+\end{figure}
+
+The models place their errors differently. The logistic regression is the more cautious model: it raises 112 false alarms, which is 25.2\% of the on-time flights, and it misses 209 delays, which is 40.0\% of the delayed flights. Gradient boosting flags more flights. It finds 16 more delayed flights than the logistic regression (330 compared with 314), and it pays for them with 39 additional false alarms (151 compared with 112). Its false alarm rate is 34.0\% and its miss rate is 36.9\%.
+
+Both models predict fewer delays than occurred: they flag 44.1\% and 49.7\% of the flights, while the actual delayed share was 54.1\%. For both models the false negatives therefore outnumber the false alarms, by 209 against 112 for the logistic regression and by 193 against 151 for gradient boosting. This is consistent with models that were trained on months with a delayed share of 40.4\% and then met a month with a much higher share, and I examine it in the threshold analysis (\cref{sec:threshold}). For an operator, the practical reading is that a flagged flight is delayed in 74\% of the cases for the logistic regression and in 69\% for gradient boosting, while 40\% and 37\% of the delays occur without a warning.
+
+\subsection{Precision-recall curves}\label{sec:pr}
+\Cref{fig:pr} shows the precision-recall curves of both models on the December test set. The precision-recall view is useful here for a practical reason: it shows how many of the flights that a model flags are really delayed, and how many of the delayed flights it finds, over all possible thresholds and not only at 0.5. The dashed line is the no-skill level, which equals the delayed share of the test month, 54.1\%. The average precision, which summarizes each curve, is 0.784 for the logistic regression and 0.773 for gradient boosting. Both are clearly above the no-skill level, and the two curves are close to each other over most of the range.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{precision_recall_test}
+  \caption{Precision-recall curves of both models on the December test set. The dashed line marks the no-skill level of 54.1\%.}
+  \label{fig:pr}
+\end{figure}
+
+The curves also show what a higher recall costs. At a recall of at least 50\%, the best attainable precision is 0.773 for the logistic regression and 0.751 for gradient boosting. At a recall of at least 70\% it falls to 0.700 and 0.694, and at a recall of at least 90\% to 0.645 and 0.639. A model that finds nearly all delayed flights therefore raises a false alarm for about one flag in three. Precision also depends on the delayed share of the period, which was unusually high in December. In a month with a lower delayed share, the same ranking would produce a lower precision, so I read these values as specific to the test month.
+
+\subsection{Error analysis}\label{sec:errors}
+I examined where the errors occur, using the saved tables of the notebook. For each group, I report the share of flights that the model flagged as delayed, the error rate, and the numbers of false positives (FP) and false negatives (FN). A false positive is an on-time flight that the model flagged as delayed, and a false negative is a delayed flight that it missed. The counts are not stored in the notebook tables. I derived them from the flagged share and the error rate of each group, and the sums over the groups match the confusion matrices in \cref{fig:confusion}.
+
+\paragraph{By time of day.} \Cref{tab:error_time} groups the flights by the scheduled hour of arrival. The error rate is lowest at night, between 00 and 05, and in the afternoon and evening, at about 30\% to 38\%, and highest in the morning, between 06 and 11, at 43\% to 45\%. The two kinds of error differ clearly between the blocks. In the morning, both models flag few flights (12.0\% and 17.9\%), although about half of them are delayed, so almost all errors are false negatives. At night, the models flag 74.3\% and 85.6\% of the flights, above the 66.5\% that are delayed, and the false positives dominate. The afternoon block contains the largest group of 382 flights and the largest number of missed delays, 89 and 87. This pattern is consistent with a schedule-based score that rises through the day, but I cannot establish the cause from these data.
+
+\input{tables/tab_error_time}
+
+\paragraph{By airline.} \Cref{tab:error_airline} shows the same analysis for each airline. Airlines are anonymized and ranked by the number of test flights, and all airlines with fewer than 30 test flights are pooled. Most groups are small, so their error rates are uncertain, and I do not rank the airlines by them. Two patterns stand out. For several airlines the models predict almost one class for every flight. Airlines 3 and 11 have delayed shares of 23.7\% and 22.6\%, and neither model flags any of their flights. Airline 5 has a delayed share of 11.1\%: the logistic regression flags none of its flights, while gradient boosting flags 31.1\%. At the other end, Airlines 4, 9, and 10 have delayed shares of 74.2\% to 83.8\%, and both models flag at least 95\% of their flights. This suggests that for these groups the models mainly follow the typical outcome of the airline in the fitting months, although I did not tabulate the delayed shares by airline for those months. The errors are then the flights that deviate from the predicted class. For Airlines 2 and 12, in contrast, the error rate of 43.5\% to 63.3\% is close to or above the level of a random guess, so the models have little information about these airlines.
+
+\input{tables/tab_error_airline}
+
+Overall, the logistic regression makes fewer false positives (112 against 151) and gradient boosting makes fewer false negatives (193 against 209). Neither model is better in both respects, and which error matters more depends on operational costs that I do not have (\cref{sec:rule}).
+
+\subsection{Threshold analysis}\label{sec:threshold}
+\Cref{tab:threshold} shows how the macro F1 and the share of flagged flights change when the threshold moves between 0.30 and 0.70. This is a diagnosis on the test month and not a tuning step: the threshold in all other results stays at 0.5 (\cref{sec:rule}), and the values below must not be read as a recommendation.
+
+\input{tables/tab_threshold}
+
+Two findings stand out. First, the macro F1 is fairly flat in the middle of the range. Between 0.35 and 0.55, it stays between 0.648 and 0.680 for the logistic regression and between 0.643 and 0.669 for gradient boosting. Outside this range it drops, to 0.558 and 0.528 at a threshold of 0.70, because the models then flag only 18.4\% and 15.4\% of the flights. Second, the best value for both models is at 0.45, where the macro F1 is 0.680 for the logistic regression and 0.669 for gradient boosting. This is higher than at 0.5 by 0.012 and 0.025. At 0.45, the models flag 56.6\% and 56.0\% of the flights, which is close to the actual delayed share of 54.1\%. The threshold of 0.5 flags fewer flights (44.1\% and 49.7\%), and this agrees with the observation in \cref{sec:confusion} that the models predict fewer delays than occurred.
+
+The result has two limits. The gain from 0.45 is small compared with the width of the bootstrap intervals in \cref{tab:metrics}, so I cannot say that 0.45 is better than 0.5 in general. The best threshold would also differ in a month with another delayed share, because the models were trained on months in which about 40\% of the flights were delayed. For operational use, the threshold should therefore be set on the basis of the cost of a false alarm compared with a missed delay, which I do not have. The table helps to make this choice, because it shows the share of flights that an operator would have to handle at each threshold.
+
+\subsection{Robustness analysis}\label{sec:robustness}
+The ledger contains rows that could distort the results (\cref{sec:data}). I tested whether they matter by repeating the final fit and the test evaluation after removing them. \Cref{tab:robustness} shows the result for three variants. The first is the reported analysis. The second removes the 26 flights with the remark \col{TEST}, all of which fall into the fitting months. The third also removes the 118 rescheduled flights, of which 109 are in the fitting months and 9 in the test month. The selected settings were kept, and the models were not tuned again.
+
+\input{tables/tab_robustness}
+
+The results are stable. The macro F1 of the logistic regression changes by at most 0.001, from 0.668 to 0.669 and back, and its ROC AUC by at most 0.001. For gradient boosting, the macro F1 rises from 0.644 to 0.646 and then to 0.653, and its ROC AUC from 0.739 to 0.743. The largest change is therefore 0.009 for the macro F1 and 0.004 for the ROC AUC, which is much smaller than the bootstrap intervals in \cref{tab:metrics}. In all three variants, the logistic regression is ahead of gradient boosting in both metrics, but the gap in macro F1 shrinks from 0.024 to 0.015. I take this as a sign that the two models are close, and not as a change in the conclusion. I did not test other exclusions, for example of the early arrivals or of the duplicated rows, because they affect only three and eight flights.

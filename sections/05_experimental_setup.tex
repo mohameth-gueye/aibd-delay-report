@@ -1,0 +1,14 @@
+% 05_experimental_setup.tex: Section 4.
+\section{Experimental Setup}\label{sec:setup}
+
+I split the flights by the month of their scheduled arrival, so that the sets follow the order of time. \Cref{tab:split} shows the sets. January to October form the training set with \num{8994} flights, November forms the validation set with \num{902} flights, and December forms the test set with \num{967} flights. The code checks that the last flight of each set is scheduled before the first flight of the next set. A chronological split matches the intended use, where a model trained on past months predicts a coming month. A random split would place flights of the same day, and with them the same weather and disruptions, in both the training and the test data, and it would make the result look better than it can be in use.
+
+\input{tables/tab_split}
+
+The procedure has four steps, in this order. First, I trained the candidate models on January to October. Second, I used November to select the settings of each model (\cref{sec:tuning}). Third, I refitted both models with the selected settings on January to November, which gives \num{9896} flights with a delayed share of 40.4\%, so that the models can use the most recent month before the test. The encoders were refitted in this step as well, so that the test month had no influence on any part of the pipeline. Fourth, I evaluated the refitted models on December, and only on December.
+
+The test month was used exactly once for the performance evaluation. The metrics, the confusion matrices, and the precision-recall curves in \cref{sec:results} all come from the single set of predictions made in the fourth step, and I selected every setting before the test month was scored. Three further analyses use the December data again. The bootstrap reuses the same predictions, the threshold analysis scores them at other thresholds, and the robustness analysis refits the models on reduced data and evaluates them on December. I report these analyses as diagnostics. None of them was used to select a model, a setting or a threshold.
+
+All random components use the seed 42: the logistic regression, the gradient boosting model, and the generator of the bootstrap. The software environment is listed in \cref{tab:software}, and the exact versions are saved with the results of the analysis. I expect identical results only with the same library versions, because the default behavior of a library can change between versions.
+
+\input{tables/tab_software}

@@ -1,0 +1,20 @@
+% tab_features.tex, source: notebook sections 9 and 10 (Features, coverage table).
+\begin{table}[ht]
+  \centering
+  \caption{The seven predictors. ``Levels'' gives the number of distinct values in the training months (January to October).}
+  \label{tab:features}
+  \footnotesize
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.7cm}>{\raggedright\arraybackslash}p{2.1cm}r>{\raggedright\arraybackslash}p{7.0cm}@{}}
+    \toprule
+    Feature & Type & Levels & Why it is known before arrival \\
+    \midrule
+    \col{airline} & categorical & 33 & The operator is fixed for each scheduled service. \\ \addlinespace
+    \col{flight_number} & categorical & 176 & It identifies the scheduled service and is published with the schedule. \\ \addlinespace
+    \col{aircraft_type} & categorical & 38 & It is recorded for the scheduled service. The ledger does not document late equipment changes, so I treat it as the planned type. \\ \addlinespace
+    \col{origin} & categorical & 66 & It is the departure airport of the scheduled service. It is called \col{provenance} in the ledger. \\ \addlinespace
+    \col{sta_hour} & numeric & 24 & It is the hour of STA, which is the schedule itself. \\ \addlinespace
+    \col{sta_dayofweek} & numeric & 7 & It is derived from STA (Monday is 0). \\ \addlinespace
+    \col{is_weekend} & binary & 2 & It is derived from the day of the week. \\
+    \bottomrule
+  \end{tabular}
+\end{table}

@@ -1,0 +1,21 @@
+% tab_val_grid_lr.tex, source: notebook section 13 (Logistic regression tuning).
+\begin{table}[H]
+  \centering
+  \caption{The eight best of the 15 logistic regression settings on the validation month, ranked by macro F1 and, for ties, by ROC AUC. The selected setting is in bold.}
+  \label{tab:val_grid_lr}
+  \footnotesize
+  \begin{tabular*}{0.8\textwidth}{@{\extracolsep{\fill}}cccccc@{}}
+    \toprule
+    Rank & $C$ & Min.\ frequency & Macro F1 & ROC AUC & PR AUC \\
+    \midrule
+    \textbf{1} & \textbf{0.3} & \textbf{10} & \textbf{0.649} & \textbf{0.699} & \textbf{0.582} \\
+    2 & 0.1 & 10 & 0.645 & 0.698 & 0.584 \\
+    3 & 0.1 & 30 & 0.645 & 0.698 & 0.588 \\
+    4 & 1.0 & 60 & 0.645 & 0.698 & 0.586 \\
+    5 & 0.3 & 30 & 0.643 & 0.698 & 0.588 \\
+    6 & 1.0 & 10 & 0.642 & 0.696 & 0.574 \\
+    7 & 0.1 & 60 & 0.642 & 0.699 & 0.582 \\
+    8 & 0.3 & 60 & 0.640 & 0.699 & 0.585 \\
+    \bottomrule
+  \end{tabular*}
+\end{table}

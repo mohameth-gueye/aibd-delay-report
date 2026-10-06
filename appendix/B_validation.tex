@@ -1,0 +1,14 @@
+% B_validation.tex: Appendix B.
+\section{Validation Results}\label{app:validation}
+
+This appendix documents the model selection of \cref{sec:tuning}. All numbers come from the November validation month, on which the settings were chosen. They are not test results and should not be compared with \cref{tab:metrics}, because the delayed share of November (35.5\%) differs strongly from that of December (54.1\%).
+
+\Cref{tab:val_metrics} shows the metrics of the three models with the selected settings. The two trained models beat the majority baseline, which reaches an accuracy of 0.645 but a macro F1 of only 0.392. Logistic regression and gradient boosting are practically tied, with macro F1 values of 0.649 and 0.651 and ROC AUC values of 0.699 and 0.700. At the threshold of 0.5, the logistic regression flags 378 of the 902 flights, of which 199 are delayed, and it misses 121 of the 320 delayed flights. Gradient boosting flags 393 flights, of which 206 are delayed, and it misses 114 delayed flights.
+
+\input{tables/tab_val_metrics}
+
+\Cref{tab:val_grid_lr,tab:val_grid_gb} list the eight best settings of each model. The selected settings are the first rows: $C=0.3$ with a minimum frequency of 10 for the logistic regression, and a learning rate of 0.05, 8 leaves, a leaf size of 60, 100 trees, and a minimum frequency of 60 for gradient boosting. The macro F1 of the eight best settings lies between 0.640 and 0.649 for the logistic regression and between 0.641 and 0.651 for gradient boosting. The first-ranked setting leads the second by only 0.004 and 0.005, and several settings share the same macro F1 and differ in the third decimal of the ROC AUC. The selection among these settings is therefore not sharp. Seven of the eight best gradient boosting settings use 100 trees, and six use 8 leaves, which is consistent with a model that profits from strong limits on its complexity.
+
+\input{tables/tab_val_grid_lr}
+
+\input{tables/tab_val_grid_gb}

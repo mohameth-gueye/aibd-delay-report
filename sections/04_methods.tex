@@ -1,0 +1,58 @@
+% 04_methods.tex: Section 3.
+\section{Methods}\label{sec:methods}
+
+\subsection{Leakage prevention}\label{sec:leakage}
+
+Data leakage occurs when a model is trained or evaluated with information that would not be available at the moment the prediction is made. The model then appears more accurate than it can be in use. In this dataset the risk is high, because the ledger is completed after each flight: many of its columns describe what happened, and only a few describe what was planned.
+
+I therefore assigned each of the 60 columns to exactly one role before modeling, according to when its value becomes known. Five columns are predictor candidates, two are identifiers, two are the source of the target, 20 are known only at or after arrival, four are redundant or bookkeeping fields, and 27 are empty or constant. \Cref{tab:excluded} lists the 22 columns that would leak information and gives the reason for each group.
+
+\input{tables/tab_excluded}
+
+The stand, belt, and gate columns are the least obvious case. An allocation is planned before arrival, so it could be a legitimate predictor. However, the ledger does not document whether the recorded value is the planned allocation or the one actually used, and allocations can be changed in response to delays, congestion, and resource conflicts. Because I cannot verify this from the data, I treated these columns as unavailable at prediction time.
+
+One further exclusion is unrelated to leakage. The aircraft registration is known before arrival, but it has 609 distinct values, of which 218 occur fewer than five times. It acts as an aircraft identifier and would increase the risk of overfitting, so I did not use it.
+
+The exclusion is also enforced in the code. Before any model is fitted, an assertion compares the feature list with the columns in \cref{tab:excluded} and with the derived target columns, and it stops the run if they overlap.
+
+\subsection{Feature selection}\label{sec:features}
+
+The models use seven predictors, listed in \cref{tab:features}. Four describe the scheduled service: the airline, the flight number, the aircraft type, and the origin. Three describe the scheduled time: the hour of STA, the day of the week, and a weekend flag derived from the day of the week. I applied one criterion to every variable: it is a candidate only if its value is part of the schedule, so that an operator could read it before the aircraft arrives. All seven variables pass this test, and the code confirms that none of them appears among the excluded columns (\cref{sec:leakage}).
+
+\input{tables/tab_features}
+
+Four of the predictors have many levels, and many of these levels are rare. The flight number has 176 levels in the training months, and 100 of them occur in fewer than 30 training flights. I therefore pooled rare levels into one infrequent level for each variable, and I treated the minimum frequency as a tuning parameter (\cref{sec:tuning}). A level that does not occur in the training months is treated as infrequent by the logistic regression and as a missing value by the gradient boosting model. This affects few flights: in the validation month, 1.22\% of the flights have a flight number and 1.00\% an aircraft type that does not occur in the training months. All encoders are fitted inside a pipeline together with the model, and only on the training data of each step, so that no information from the validation or test months enters the encoding.
+
+\subsection{Models}\label{sec:models}
+
+I compare three models of increasing flexibility, all implemented with scikit-learn \citep{pedregosa2011scikit}. Each model is wrapped in a pipeline that contains its own encoding, and all of them use the random seed 42.
+
+\paragraph{Majority-class baseline.} The baseline predicts the most frequent class of the training months, which is ``on time,'' for every flight, and it uses no feature. It shows what the class balance alone achieves, and any useful model has to beat it.
+
+\paragraph{Logistic regression.} Logistic regression models the log-odds of a delay as a linear function of the encoded inputs. I one-hot encoded the four categorical variables together with the scheduled hour and the day of the week, so that the effect of the hour is not forced to be linear. The weekend flag is a function of the day of the week and is therefore not entered separately. The model uses the default L2 penalty, whose strength is controlled by the parameter $C$, which I tuned. Smaller values of $C$ mean stronger regularization. The maximum number of iterations is 2000.
+
+\paragraph{Histogram gradient boosting.} Gradient boosting builds an additive ensemble of shallow decision trees, where each tree is fitted to correct the errors of the trees before it. I used the histogram-based implementation of scikit-learn, which handles categorical variables directly and therefore needs no one-hot encoding. The four categorical variables are ordinally encoded and flagged as categorical, and the three numeric variables are passed on unchanged. Early stopping is switched off, so the number of trees is a fixed parameter that I chose in the tuning step.
+
+I chose logistic regression as an interpretable reference with few degrees of freedom, and gradient boosting as a model that can represent interactions, for example between an airline and the hour of the day. Both models use balanced class weights, so that each class carries the same total weight in the loss. This changes the meaning of the predicted probability: it is a score for ranking flights and applying the decision rule in \cref{sec:rule}, and I do not interpret it as a calibrated probability of delay.
+
+\subsection{Hyperparameter tuning}\label{sec:tuning}
+
+I tuned each model on a grid of settings, listed in \cref{tab:grids}. The logistic regression has two tuned parameters, the regularization strength $C$ and the minimum frequency for pooling rare categories (\cref{sec:features}), which gives 15 combinations. The gradient boosting model has five: the learning rate, the maximum number of leaf nodes per tree, the minimum number of flights per leaf, the number of trees, and the same minimum frequency, which gives 48 combinations. The learning rate, the number of leaves and the minimum leaf size all limit how closely the ensemble can follow the training data. The parameters are those of the scikit-learn implementations \citep{pedregosa2011scikit}.
+
+\input{tables/tab_grids}
+
+Every combination was fitted on the training months, January to October, and scored on the validation month, November, with the decision rule of \cref{sec:rule}. I did not use cross-validation. Cross-validation divides the training data into several folds and rotates the fold that is held out, so that every flight serves once as validation data. With random folds, flights from later months would help to predict earlier flights, which does not match the intended use of the model, and a rolling scheme that respects the time order would multiply the number of fits. I therefore used one chronological validation month. The price is that the selection rests on 902 flights from a single month.
+
+I selected the combination with the highest macro F1 on the validation month and used the ROC AUC to break ties. Macro F1 is the mean of the F1 scores of the two classes, so a model has to perform on delayed and on on-time flights. Accuracy would reward the majority baseline, which reaches an accuracy of 0.645 on the validation month, but a macro F1 of only 0.392. The ROC AUC does not depend on the threshold and serves as a second view of the ranking quality.
+
+The selected settings are shown in the last column of \cref{tab:grids}. They reach a validation macro F1 of 0.649 for the logistic regression and 0.651 for gradient boosting. The selection is not sharply determined: the eight best combinations of each model lie within about 0.01 of macro F1, between 0.640 and 0.649 for the logistic regression and between 0.641 and 0.651 for gradient boosting. I therefore regard the choice among these combinations as arbitrary within this range, and I do not read the small difference between the two models on the validation month as evidence for one of them. After the selection, both models were refitted on January to November with the selected settings (\cref{sec:setup}).
+
+\subsection{Classification rule}\label{sec:rule}
+
+A flight is classified as delayed if its predicted score is at least 0.5, and as on time otherwise. I fixed this threshold for both models and did not optimize it, for four reasons. First, the delayed share changes strongly between periods: 40.9\% in the training months, 35.5\% in November and 54.1\% in December. A threshold tuned on November would be tuned for a month with a much lower delayed share than the test month, and I would not expect it to carry over. Second, tuning the threshold on the test month would break the rule that the test month is evaluated exactly once (\cref{sec:setup}). Third, balanced class weights make 0.5 the neutral cut-off of the training objective. Fourth, I have no information on the operational cost of a false alarm compared with a missed delay, and without it any other threshold would be a choice that I cannot justify. To show how much the result depends on this choice, I report the macro F1 for thresholds between 0.30 and 0.70 in \cref{sec:threshold}. That analysis is a diagnosis only and does not change any reported result.
+
+\subsection{Bootstrap analysis}\label{sec:bootstrap}
+
+The test month contains 967 flights, and a single value of a metric says little about its uncertainty. I estimated the uncertainty with a bootstrap, which resamples the test data repeatedly and recomputes the metric on every resample. Flights on the same day share weather, congestion, and disruptions, so they are not independent, and resampling single flights would give intervals that are too narrow. I therefore resampled whole days. In each of 1000 resamples, I drew 31 days with replacement from the 31 days of December, took all flights of the drawn days, and computed the macro F1 and the ROC AUC of each model on them. The models are not refitted: the predictions made once on the test month are reused, so the bootstrap measures how the metrics vary with the choice of test days.
+
+The 95\% confidence interval of a metric is formed by the 2.5th and the 97.5th percentile of its 1000 resampled values. Both models were evaluated on the same resamples, which allows a paired comparison. For each resample I computed the difference between the metric of the logistic regression and that of gradient boosting, and I report the percentile interval of these differences. If this interval excludes zero, the difference points in the same direction in nearly all resampled sets of test days. The random generator is seeded with 42. The intervals cover macro F1 and ROC AUC only; accuracy, precision, and recall are reported as point estimates. The intervals describe the variation caused by the test days and do not include the variation caused by the training data (\cref{sec:limitations}).

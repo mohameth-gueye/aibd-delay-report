@@ -1,0 +1,19 @@
+% tab_robustness.tex, source: results/robustness_row_exclusions.csv of the analysis repository.
+\begin{table}[ht]
+  \centering
+  \caption{Test results after the exclusion of unusual rows. Each variant refits both models on the remaining January to November flights with the selected settings and scores them on the remaining December flights at the threshold of 0.5.}
+  \label{tab:robustness}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.4cm}rrcccc@{}}
+    \toprule
+    & & & \multicolumn{2}{c}{Logistic regression} & \multicolumn{2}{c}{Gradient boosting} \\
+    \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+    Variant & Fit rows & Test rows & Macro F1 & ROC AUC & Macro F1 & ROC AUC \\
+    \midrule
+    All rows (reported results) & \num{9896} & 967 & 0.668 & 0.749 & 0.644 & 0.739 \\
+    Without remark \col{TEST} & \num{9870} & 967 & 0.669 & 0.749 & 0.646 & 0.742 \\
+    Without \col{TEST} and rescheduled & \num{9761} & 958 & 0.668 & 0.748 & 0.653 & 0.743 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

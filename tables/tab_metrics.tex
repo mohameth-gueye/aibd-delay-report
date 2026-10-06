@@ -1,0 +1,25 @@
+% tab_metrics.tex, source: results/test_metrics.csv and results/test_metrics_ci.csv.
+\begin{table}[ht]
+  \centering
+  \caption{Performance on the December test set (\num{967} flights, 54.1\% delayed) at the fixed threshold of 0.5. Square brackets give 95\% confidence intervals from the day-cluster bootstrap (\cref{sec:bootstrap}).}
+  \label{tab:metrics}
+  \begin{threeparttable}
+    \footnotesize
+    \setlength{\tabcolsep}{2pt}
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccccc@{}}
+      \toprule
+      Model & Accuracy & Precision & Recall & F1 & Macro F1 & ROC AUC \\
+      \midrule
+      Majority class & 0.459 & 0.000 & 0.000 & 0.000 & 0.315 & 0.500 \\
+      Logistic regression & 0.668 & 0.737 & 0.600 & 0.662 & 0.668 [0.636, 0.694] & 0.749 [0.722, 0.776] \\
+      Gradient boosting & 0.644 & 0.686 & 0.631 & 0.657 & 0.644 [0.619, 0.669] & 0.739 [0.711, 0.767] \\
+      \midrule
+      Logistic minus boosting & & & & & 0.024 [0.005, 0.042] & 0.009 [0.000, 0.018] \\
+      \bottomrule
+    \end{tabular*}
+    \begin{tablenotes}
+      \footnotesize
+      \item Precision, recall, and F1 refer to the delayed class. Macro F1 is the mean of the F1 scores of the two classes. The majority class never predicts a delay, so its precision is undefined and scored as 0. The last row gives the paired difference between the models on the same bootstrap resamples. Its lower limit for the ROC AUC is positive but rounds to 0.000.
+    \end{tablenotes}
+  \end{threeparttable}
+\end{table}

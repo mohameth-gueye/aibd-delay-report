@@ -1,0 +1,13 @@
+% 09_ai_statement.tex: statement on the use of AI tools (unnumbered, placed before the references).
+% DRAFT: rewrite this statement in your own words before submitting. Every sentence must be true.
+\section*{Statement on the Use of AI Tools}
+
+I used one AI tool in this project, the assistant Claude (Anthropic). I describe here what the tool did, what I did, and where the wording of this report comes from.
+
+\paragraph{Notebook.} Claude drafted parts of the notebook code, and I wrote the other parts myself. I ran the code, checked the outputs, and adapted the code where it was needed. I also used Claude to find errors in the code and to have design options explained to me.
+
+\paragraph{Report.} Claude drafted the text of this report, section by section, on the basis of my notebook, my saved result tables, and my README, and it typeset the tables and the document in LaTeX. I read each section, asked for changes, and accepted the final version, so most of the wording comes from the suggestions of the tool. Claude also checked the numbers in the report against my result files, and it computed a small number of values from my saved files: the counts of false positives and false negatives in \cref{tab:error_time,tab:error_airline}, which the text describes as derived, and the precision at fixed levels of recall in \cref{sec:pr}. Some readings of the results, for example the use as a first screening tool and the next steps in \cref{sec:conclusion}, were proposed by the tool, and I kept them because I agree with them.
+
+\paragraph{My own contribution.} The topic and the data are mine. I made the decisions of the analysis: the chronological split, the fixed threshold of 0.5, and the treatment of the unusual rows.
+
+\paragraph{Responsibility.} I treated the outputs of the tool as suggestions and not as authoritative sources. I checked the code and the content that I adopted, and I take responsibility for the report, the code, and the results.

@@ -1,0 +1,17 @@
+% tab_split.tex, source: notebook section 8 (Chronological split) and section 16 (final fit).
+\begin{table}[ht]
+  \centering
+  \caption{Chronological split by month of scheduled arrival. The final-fit set is the union of the training and validation sets.}
+  \label{tab:split}
+  \footnotesize
+  \begin{tabular}{@{}llrrr>{\raggedright\arraybackslash}p{4.3cm}@{}}
+    \toprule
+    Set & Months & Flights & Delayed & Delayed share & Purpose \\
+    \midrule
+    Training & January to October & \num{8994} & \num{3677} & 40.9\% & fit the candidate models \\
+    Validation & November & \num{902} & \num{320} & 35.5\% & select the settings \\
+    Final fit & January to November & \num{9896} & \num{3997} & 40.4\% & refit the selected models \\
+    Test & December & \num{967} & \num{523} & 54.1\% & final evaluation, once \\
+    \bottomrule
+  \end{tabular}
+\end{table}

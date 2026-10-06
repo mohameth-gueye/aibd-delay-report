@@ -1,0 +1,12 @@
+% 03_data.tex: Section 2.
+\section{Data}\label{sec:data}
+
+The dataset is the official regular-arrivals ledger of AIBD for 2025, an operational record kept by AIBD LAS that I obtained for academic research \citep{aibd2025ledger}. Each row is one regular arrival that was not canceled, and the scheduled arrivals run from January~1 to December~31, 2025. The file contains \num{10863} flights and 60 columns. Before any modeling I checked that every flight has a unique event identifier and that STA and \blockon{} are never missing.
+
+The target follows \cref{eq:target}. I recomputed the delay in minutes from the two timestamps and confirmed that it equals the delay stored in the ledger for every flight. With the 15-minute threshold, \num{4520} of the \num{10863} flights are delayed, which is 41.6\%. The two classes are therefore moderately imbalanced: a model that always predicts ``on time'' would already be correct for 58.4\% of all flights. \Cref{tab:delay} shows the underlying delay. The median flight is 10~minutes late, a quarter of all flights arrive at least 7~minutes early, and about 5\% arrive more than 105~minutes late. The delayed share also depends strongly on the threshold: 63.8\% of all flights arrive after STA, 26.5\% arrive more than 30~minutes late, and 12.0\% more than 60~minutes late.
+
+\input{tables/tab_delay}
+
+Preparation was limited to three steps. I normalized the text fields (trimmed, single spaces, upper case), so that the same airline or origin is not counted twice under different spellings; I replaced the few missing values in the categorical fields, one flight number and six aircraft types, with the level \col{UNKNOWN}; and I sorted the flights by STA. No row was removed. A row audit identified four groups of unusual records: 26~flights with the remark \col{TEST}, 118~flights whose remark marks them as rescheduled, 8~rows that share their flight number and STA with another row, and 3~flights that arrived more than 120~minutes early. I kept all of them in the main analysis, because I could not justify an exclusion on operational grounds, and I test the effect of removing the first two groups in \cref{sec:robustness}.
+
+The ledger is held by AIBD LAS and cannot be shared publicly, because it contains restricted operational information. Access would need to be requested from AIBD LAS. The project repository therefore contains the code, the saved notebook outputs, and the aggregated result tables, but no flight-level data, and airline names are anonymized in all saved tables (Appendix~\ref{app:reproducibility}).

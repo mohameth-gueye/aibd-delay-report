@@ -1,0 +1,23 @@
+% tab_threshold.tex, source: results/threshold_sensitivity.csv of the analysis repository.
+\begin{table}[ht]
+  \centering
+  \caption{Macro F1 and share of flights flagged as delayed for different thresholds on the December test set. The actual delayed share is 54.1\%. The best macro F1 of each model is in bold, and the reported threshold is 0.50.}
+  \label{tab:threshold}
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc@{}}
+    \toprule
+    & \multicolumn{2}{c}{Logistic regression} & \multicolumn{2}{c}{Gradient boosting} \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+    Threshold & Macro F1 & Flagged (\%) & Macro F1 & Flagged (\%) \\
+    \midrule
+    0.30 & 0.646 & 76.1 & 0.636 & 76.5 \\
+    0.35 & 0.655 & 70.5 & 0.648 & 72.2 \\
+    0.40 & 0.662 & 63.5 & 0.667 & 62.9 \\
+    \textbf{0.45} & \textbf{0.680} & \textbf{56.6} & \textbf{0.669} & \textbf{56.0} \\
+    0.50 & 0.668 & 44.1 & 0.644 & 49.7 \\
+    0.55 & 0.648 & 36.0 & 0.643 & 39.0 \\
+    0.60 & 0.628 & 29.7 & 0.621 & 30.2 \\
+    0.65 & 0.593 & 24.0 & 0.576 & 21.1 \\
+    0.70 & 0.558 & 18.4 & 0.528 & 15.4 \\
+    \bottomrule
+  \end{tabular*}
+\end{table}

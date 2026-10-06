@@ -1,0 +1,31 @@
+% tab_excluded.tex, source: notebook section 3 (Column Inventory), ROLES dictionary.
+\begin{table}[ht]
+  \centering
+  \caption{The 22 columns excluded to prevent leakage, grouped by the reason for exclusion.}
+  \label{tab:excluded}
+  \footnotesize
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{6.1cm}>{\raggedright\arraybackslash}p{6.5cm}@{}}
+    \toprule
+    Group & Columns & Why it is unavailable before arrival \\
+    \midrule
+    Target source (2) &
+      \col{block_on_datetime}, \col{sta_to_block_on_min} &
+      The target is computed from these two values. \\ \addlinespace
+    Actual times (5) &
+      \col{ata_raw}, \col{ata_datetime}, \col{block_on_raw}, \col{sta_to_ata_min}, \col{ata_to_block_on_min} &
+      Recorded when the aircraft lands and reaches its stand. They contain the outcome directly. \\ \addlinespace
+    Delay records (2) &
+      \col{arrival_delay_raw}, \col{arrival_delay_code} &
+      The recorded delay and its cause code exist only after the delay has occurred. \\ \addlinespace
+    Passenger and baggage counts (9) &
+      \col{pax_in}, \col{terminating_passengers}, \col{bb_in_raw}, \col{bb_in_effective}, \col{bb_in_was_missing}, \col{bb_in_zero_imputation_supported}, \col{trans_raw}, \col{trans_effective_for_aggregation}, \col{trans_was_missing} &
+      Counts reported for the completed flight, together with the flags derived from them. The ledger holds no forecast made before arrival. \\ \addlinespace
+    Stand, belt, and gate (3) &
+      \col{stand}, \col{belt}, \col{gate} &
+      The ledger does not document whether the value is the planned or the actual allocation, and an allocation can be changed once a delay becomes evident. \\ \addlinespace
+    Remarks (1) &
+      \col{remarks} &
+      Free text entered by operators. It can describe events of the day of operation, such as a rescheduling. \\
+    \bottomrule
+  \end{tabular}
+\end{table}

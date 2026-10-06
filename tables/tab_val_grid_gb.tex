@@ -1,0 +1,22 @@
+% tab_val_grid_gb.tex, source: notebook section 14 (Gradient boosting tuning).
+\begin{table}[H]
+  \centering
+  \caption{The eight best of the 48 gradient boosting settings on the validation month, ranked by macro F1 and, for ties, by ROC AUC. The selected setting is in bold. Rate is the learning rate, min.\ freq.\ the minimum frequency for pooling rare categories, leaves the maximum number of leaf nodes, leaf size the minimum number of flights per leaf, and trees the number of boosting iterations.}
+  \label{tab:val_grid_gb}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ccccccccc@{}}
+    \toprule
+    Rank & Rate & Leaves & Leaf size & Trees & Min.\ freq. & Macro F1 & ROC AUC & PR AUC \\
+    \midrule
+    \textbf{1} & \textbf{0.05} & \textbf{8} & \textbf{60} & \textbf{100} & \textbf{60} & \textbf{0.651} & \textbf{0.700} & \textbf{0.586} \\
+    2 & 0.05 & 8 & 20 & 100 & 60 & 0.646 & 0.699 & 0.584 \\
+    3 & 0.10 & 8 & 20 & 100 & 60 & 0.644 & 0.700 & 0.585 \\
+    4 & 0.10 & 8 & 60 & 100 & 60 & 0.643 & 0.701 & 0.591 \\
+    5 & 0.10 & 16 & 60 & 100 & 10 & 0.643 & 0.698 & 0.580 \\
+    6 & 0.05 & 8 & 60 & 300 & 60 & 0.642 & 0.697 & 0.588 \\
+    7 & 0.05 & 16 & 60 & 100 & 60 & 0.642 & 0.703 & 0.587 \\
+    8 & 0.10 & 8 & 20 & 100 & 10 & 0.641 & 0.694 & 0.574 \\
+    \bottomrule
+  \end{tabular*}
+\end{table}

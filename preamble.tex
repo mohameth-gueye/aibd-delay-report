@@ -1,0 +1,55 @@
+% =====================================================================
+% preamble.tex: packages and project-wide macros. Loaded by main.tex.
+% =====================================================================
+
+% Encoding, fonts, language
+\usepackage[T1]{fontenc}
+\IfFileExists{lmodern.sty}{\usepackage{lmodern}}{} % Latin Modern (present on Overleaf)
+\usepackage[american]{babel}
+\usepackage{microtype}
+
+% Page layout
+\usepackage[a4paper,margin=2.5cm,headheight=15pt]{geometry}
+\usepackage{setspace}
+\setstretch{1.1}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Mathematics and numbers
+\usepackage{amsmath}
+\usepackage{siunitx}
+\sisetup{group-separator={,}, group-minimum-digits=4} % \num{10863} prints 10,863
+
+% Tables
+\usepackage{booktabs}        % \toprule, \midrule, \bottomrule
+\usepackage{array}
+\usepackage{threeparttable}  % notes below a table
+
+% Figures
+\usepackage{graphicx}
+\usepackage{placeins} % \FloatBarrier: keeps floats inside their part of the document
+\usepackage{float}    % [H]: places a table exactly where it stands in the source
+\graphicspath{{figures/}}    % \includegraphics{name} looks in figures/
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+
+% Lists and color
+\usepackage{enumitem}         % compact lists: \begin{itemize}[nosep]
+\usepackage{xcolor}
+
+% Bibliography: author-year with BibTeX (Overleaf default)
+\usepackage[round,sort]{natbib}
+\bibliographystyle{apalike}   % prints: Author (Year). Title. Note.
+
+% Links and cross-references (hyperref late, cleveref last)
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,capitalize,noabbrev]{cleveref}
+
+% Project macros
+\newcommand{\col}[1]{\texttt{\detokenize{#1}}} % dataset column name, e.g. \col{sta_hour}
+\newcommand{\blockon}{\col{BLOCK_ON}}
+% Visible marker for content that is not written yet. Delete every use before submitting.
+\newcommand{\pending}[1]{\par\noindent\textcolor{gray}{\itshape [Pending: #1]}\par}

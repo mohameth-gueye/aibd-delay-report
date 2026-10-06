@@ -1,0 +1,18 @@
+% A_reproducibility.tex: Appendix A.
+\section{Reproducibility}\label{app:reproducibility}
+
+This appendix lists what is needed to repeat the analysis. The complete pipeline is one Jupyter notebook, which runs from the loading of the ledger to the saved result tables and figures.
+
+\paragraph{Software and seed.} The analysis ran with Python 3.12.12, pandas 2.3.3, NumPy 2.3.5, scikit-learn 1.7.2, and Matplotlib 3.10.6, as listed in \cref{tab:software}. The versions are pinned in the file \col{requirements.txt}, together with JupyterLab (version 4 or later), and they are also written to \col{results/run_info.txt} at the end of each run. The random seed is 42. It is used in the models and in the bootstrap.
+
+\paragraph{Repository.} The code and the saved outputs are available at \url{https://github.com/mohameth-gueye/aibd-arrival-delay-retake}. The repository contains the notebook with its saved outputs, the folder \col{results/} with the aggregated tables (metrics, confidence intervals, error analysis, threshold sensitivity, and robustness) and the run information, the folder \col{figures/} with the confusion matrices and the precision-recall curves, and the requirements file. The folder \col{data/} is not tracked, because the ledger is restricted. Airline names are anonymized in all saved tables.
+
+\paragraph{Steps to rerun the notebook.} The following steps repeat the analysis, if the ledger is available.
+\begin{enumerate}[label=\arabic*.,leftmargin=*,itemsep=2pt]
+  \item Request the ledger from AIBD LAS (see below). Save the file in the project folder as \col{data/aibd_2025_regular_arrivals.csv} and keep it out of version control.
+  \item Create and activate a virtual environment with Python 3.12, and install the packages with \col{pip install -r requirements.txt}.
+  \item Start JupyterLab from the project root, because the notebook uses the relative paths \col{data/}, \col{results/}, and \col{figures/}.
+  \item Open the notebook and choose Restart and Run All. The run rebuilds all tables and figures in this report, and the values should agree with it for the same package versions.
+\end{enumerate}
+
+\paragraph{Data access.} The ledger is held by AIBD LAS \citep{aibd2025ledger}. It is not public, and access would need to be requested from AIBD LAS. Without the data, the saved outputs in the notebook and in \col{results/} show what the analysis produced, but the pipeline cannot be rerun, and row-level predictions are not shared.

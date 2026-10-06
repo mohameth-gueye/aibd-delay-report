@@ -1,0 +1,38 @@
+% tab_error_airline.tex, source: results/error_by_airline.csv of the analysis repository; the counts of false positives and
+% false negatives are derived from the flagged share and the error rate of each group.
+\begin{table}[ht]
+  \centering
+  \caption{Errors by airline on the December test set at the threshold of 0.5. Airlines are anonymized and ranked by the number of test flights. FP is the number of false positives and FN the number of false negatives.}
+  \label{tab:error_airline}
+  \begin{threeparttable}
+    \footnotesize
+    \setlength{\tabcolsep}{2pt}
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrrrrrr@{}}
+      \toprule
+      & & & \multicolumn{4}{c}{Logistic regression} & \multicolumn{4}{c}{Gradient boosting} \\
+      \cmidrule(lr){4-7} \cmidrule(lr){8-11}
+      Airline & Flights & Delayed (\%) & Flagged (\%) & Error (\%) & FP & FN & Flagged (\%) & Error (\%) & FP & FN \\
+      \midrule
+      Other airlines & 230 & 50.9 & 30.0 & 41.7 & 24 & 72 & 37.0 & 42.6 & 33 & 65 \\
+      Airline 1 & 219 & 65.8 & 58.0 & 33.3 & 28 & 45 & 59.8 & 35.2 & 32 & 45 \\
+      Airline 2 & 85 & 49.4 & 12.9 & 43.5 & 3 & 34 & 8.2 & 48.2 & 3 & 38 \\
+      Airline 3 & 76 & 23.7 & 0.0 & 23.7 & 0 & 18 & 0.0 & 23.7 & 0 & 18 \\
+      Airline 4 & 68 & 79.4 & 100.0 & 20.6 & 14 & 0 & 95.6 & 22.1 & 13 & 2 \\
+      Airline 5 & 45 & 11.1 & 0.0 & 11.1 & 0 & 5 & 31.1 & 28.9 & 11 & 2 \\
+      Airline 6 & 40 & 42.5 & 20.0 & 37.5 & 3 & 12 & 45.0 & 47.5 & 10 & 9 \\
+      Airline 7 & 38 & 55.3 & 81.6 & 47.4 & 14 & 4 & 100.0 & 44.7 & 17 & 0 \\
+      Airline 8 & 37 & 78.4 & 78.4 & 16.2 & 3 & 3 & 78.4 & 16.2 & 3 & 3 \\
+      Airline 9 & 37 & 83.8 & 97.3 & 18.9 & 6 & 1 & 100.0 & 16.2 & 6 & 0 \\
+      Airline 10 & 31 & 74.2 & 96.8 & 22.6 & 7 & 0 & 100.0 & 25.8 & 8 & 0 \\
+      Airline 11 & 31 & 22.6 & 0.0 & 22.6 & 0 & 7 & 0.0 & 22.6 & 0 & 7 \\
+      Airline 12 & 30 & 50.0 & 56.7 & 60.0 & 10 & 8 & 86.7 & 63.3 & 15 & 4 \\
+      \midrule
+      All flights & 967 & 54.1 & 44.1 & 33.2 & 112 & 209 & 49.7 & 35.6 & 151 & 193 \\
+      \bottomrule
+    \end{tabular*}
+    \begin{tablenotes}
+      \footnotesize
+      \item Other airlines pools all airlines with fewer than 30 test flights each. Delayed is the share of delayed flights in the group, flagged is the share that the model classified as delayed, and error is the share classified incorrectly.
+    \end{tablenotes}
+  \end{threeparttable}
+\end{table}

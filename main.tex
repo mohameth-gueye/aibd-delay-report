@@ -1,0 +1,46 @@
+% =====================================================================
+% main.tex: root file. Compile this file (pdfLaTeX + BibTeX).
+% It holds no report text: it loads the preamble, sets the metadata,
+% and pulls in the sections in order.
+% =====================================================================
+\documentclass[12pt,a4paper]{article}
+\input{preamble}
+
+% Report metadata: change these values here and nowhere else.
+\newcommand{\reporttitle}{Arrival Delay Classification\texorpdfstring{\\}{ }for Scheduled Flights at AIBD}
+\newcommand{\reportshorttitle}{Arrival Delay Classification at AIBD}
+\newcommand{\reportauthor}{Mohameth Gueye}
+\newcommand{\reportmodule}{Interdisciplinary Elective}
+\newcommand{\reportprogram}{M.Sc.\ Data Science, University of Europe for Applied Sciences, Potsdam}
+\newcommand{\reportlecturer}{Prof.\ Dr.\ Raja Hashim Ali}
+\newcommand{\submissiondate}{9 October 2026} % must be the day of the actual submission
+\newcommand{\dataaccessdate}{1 September 2026} % day on which the ledger was received
+
+\hypersetup{pdftitle={\reporttitle}, pdfauthor={\reportauthor}}
+\fancyhead[L]{\small\reportshorttitle}
+\fancyhead[R]{\small\reportauthor}
+
+\begin{document}
+
+\input{sections/01_title}
+\input{sections/02_objective}
+\input{sections/03_data}
+\input{sections/04_methods}
+\input{sections/05_experimental_setup}
+\input{sections/06_results}
+\input{sections/07_limitations}
+\input{sections/08_conclusion}
+
+% Statement on the use of AI tools: unnumbered, just before the references.
+\input{sections/09_ai_statement}
+
+% References: only entries that are cited in the text are printed.
+\bibliography{references}
+
+% Appendices: lettered A, B, ...
+\appendix
+\input{appendix/A_reproducibility}
+\FloatBarrier
+\input{appendix/B_validation}
+
+\end{document}
